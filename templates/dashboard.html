@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Welcome, {{ username }}</h2>
+
+<!-- 🔹 Chart Cards with Bar Graphs -->
+<div class="row mb-4">
+    <!-- Study Hours -->
+    <div class="col-md-3">
+      <div class="card" style="background-color: #e1f0ff;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="card-title text-primary">Avg Study Hours</h6>
+            <i class="bi bi-clock-fill text-primary"></i>
+          </div>
+          <h3 class="text-primary">{{ avg_study_hours or "N/A" }}</h3>
+          <canvas id="chartStudyHours" height="60"></canvas>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Attendance -->
+    <div class="col-md-3">
+      <div class="card" style="background-color: #fff4de;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="card-title text-warning">Avg Attendance</h6>
+            <i class="bi bi-person-check-fill text-warning"></i>
+          </div>
+          <h3 class="text-warning">{{ avg_attendance or "N/A" }}%</h3>
+          <canvas id="chartAttendance" height="60"></canvas>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Previous Score -->
+    <div class="col-md-3">
+      <div class="card" style="background-color: #ffe2e5;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="card-title text-danger">Avg Prev Score</h6>
+            <i class="bi bi-journal-text text-danger"></i>
+          </div>
+          <h3 class="text-danger">{{ avg_prev_score or "N/A" }}</h3>
+          <canvas id="chartPrevScore" height="60"></canvas>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Predicted Score -->
+    <div class="col-md-3">
+      <div class="card" style="background-color: #c9f7f5;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="card-title text-success">Avg Predicted Score</h6>
+            <i class="bi bi-bullseye text-success"></i>
+          </div>
+          <h3 class="text-success">{{ avg_score or "N/A" }}</h3>
+          <canvas id="chartPredictedScore" height="60"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<!-- 🔹 Detailed Prediction Table -->
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="card-title mb-0">📋 Prediction History</h5>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Study Hours</th>
+          <th>Attendance</th>
+          <th>Previous Score</th>
+          <th>Predicted Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in predictions %}
+        <tr>
+          <td>{{ row.CreatedAt.strftime('%Y-%m-%d') }}</td>
+          <td>{{ row.StudyHoursPerDay }}</td>
+          <td>{{ row.AttendancePercent }}%</td>
+          <td>{{ row.PreviousScore }}</td>
+          <td>{{ row.PredictedFinalScore }}</td>
+          <td>
+            {% if row.PredictedFinalScore >= 75 %}
+              <span class="badge badge-success">Completed</span>
+            {% elif row.PredictedFinalScore >= 60 %}
+              <span class="badge badge-warning">In Progress</span>
+            {% elif row.PredictedFinalScore >= 45 %}
+              <span class="badge badge-info">New</span>
+            {% else %}
+              <span class="badge badge-danger">Cancelled</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const miniChartOptions = {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { display: false },
+      y: { display: false }
+    }
+  };
+
+  // 🔵 Chart 1: Study Hours
+  new Chart(document.getElementById("chartStudyHours"), {
+    type: 'bar',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        data: [2, 2.5, 3, 2.2, 2.8, 3.5, 4],
+        backgroundColor: '#007bff',
+        borderRadius: 5
+      }]
+    },
+    options: miniChartOptions
+  });
+
+  // 🟡 Chart 2: Attendance
+  new Chart(document.getElementById("chartAttendance"), {
+    type: 'bar',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        data: [75, 80, 85, 82, 88, 90, 92],
+        backgroundColor: '#ffc107',
+        borderRadius: 5
+      }]
+    },
+    options: miniChartOptions
+  });
+
+  // 🔴 Chart 3: Previous Score
+  new Chart(document.getElementById("chartPrevScore"), {
+    type: 'bar',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        data: [55, 60, 58, 62, 65, 64, 67],
+        backgroundColor: '#dc3545',
+        borderRadius: 5
+      }]
+    },
+    options: miniChartOptions
+  });
+
+  // 🟢 Chart 4: Predicted Score
+  new Chart(document.getElementById("chartPredictedScore"), {
+    type: 'bar',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        data: [65, 70, 68, 72, 74, 76, 80],
+        backgroundColor: '#20c997',
+        borderRadius: 5
+      }]
+    },
+    options: miniChartOptions
+  });
+</script>
+
+{% endblock %}

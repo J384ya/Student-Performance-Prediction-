@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Custom Styles -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fc;
+    }
+    .card {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .card h3 {
+      font-weight: 700;
+      font-size: 1.6rem;
+    }
+    .table thead {
+      background-color: #f1f3f8;
+      font-weight: 600;
+    }
+    .badge {
+      font-size: 0.75rem;
+      border-radius: 1rem;
+      padding: 5px 12px;
+    }
+    .badge-success { background-color: #c9f7f5; color: #1bc5bd; }
+    .badge-warning { background-color: #fff4de; color: #ffa800; }
+    .badge-danger  { background-color: #ffe2e5; color: #f64e60; }
+    .badge-info    { background-color: #e1f0ff; color: #3699ff; }
+  </style>
+
+  {% block head %}{% endblock %}
+</head>
+<body style="margin: 0; height: 100vh; overflow: hidden;">
+
+  <div class="d-flex" style="height: 100vh; overflow: hidden;">
+
+    <!-- ✅ Sidebar -->
+    <div style="width: 260px; background-color: #ffffff; border-right: 1px solid #eee; height: 100vh; overflow-y: auto; position: fixed;">
+      <div class="d-flex flex-column justify-content-between p-3" style="height: 100%;">
+        
+        <!-- 🔹 Top: Navigation -->
+        <div>
+          <h4 class="fw-bold">
+            <i class="bi bi-pie-chart text-primary"></i>
+            <span style="color: #5A5DFF;">Student</span> Panel
+          </h4>
+
+          <ul class="nav flex-column mb-4 mt-4">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/dashboard' %}active{% endif %}" href="/dashboard">
+                <i class="bi bi-columns-gap"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/upload' %}active{% endif %}" href="/upload">
+                <i class="bi bi-upload"></i> Upload Data
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/export' %}active{% endif %}" href="/export">
+                <i class="bi bi-download"></i> Export Data
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 {% if request.path == '/analytics' %}active{% endif %}" href="/analytics">
+                <i class="bi bi-graph-up-arrow"></i> Analytics
+              </a>
+            </li>
+          </ul>
+          
+
+
+          <!-- 🔴 Logout Button -->
+          <div class="mt-3">
+            <a href="/logout" class="btn btn-outline-danger w-100">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+          </div>
+        </div>
+
+        <!-- 👤 User Info -->
+        <div class="border-top pt-3 text-center">
+            <img src="{{ url_for('static', filename='img/icons.png') }}" alt="Avatar" class="rounded-circle mb-2" width="36" height="36">
+            <div style="font-size: 0.85rem; font-weight: 600;">{{ session['name']|capitalize }}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">{{ session['username'] }}</div>
+        </div>
+  
+
+      </div>
+    </div>
+
+    <!-- ✅ Main Scrollable Area -->
+    <div style="margin-left: 260px; width: calc(100% - 260px); overflow-y: auto; height: 100vh; padding: 30px;">
+      {% block content %}{% endblock %}
+    </div>
+
+  </div>
+
+  <!-- ✅ Bootstrap JS for icons and interactivity -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
